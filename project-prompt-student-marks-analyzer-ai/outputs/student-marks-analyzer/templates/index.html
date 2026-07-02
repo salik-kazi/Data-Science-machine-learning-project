@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Marks Analyzer</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="loading-screen" id="loadingScreen">
+        <div class="loader-mark"></div>
+        <p>Preparing analytics</p>
+    </div>
+
+    <div class="aurora aurora-one"></div>
+    <div class="aurora aurora-two"></div>
+    <div class="shell">
+        <aside class="sidebar" id="sidebar">
+            <a class="brand" href="#overview" aria-label="Student Marks Analyzer home">
+                <span class="brand-mark">S</span>
+                <span>
+                    <strong>Student Marks</strong>
+                    <small>Analyzer AI</small>
+                </span>
+            </a>
+            <nav class="nav-links" aria-label="Dashboard sections">
+                <a href="#overview" class="active" data-nav>Overview</a>
+                <a href="#students" data-nav>Students</a>
+                <a href="#subjects" data-nav>Subjects</a>
+                <a href="#charts" data-nav>Charts</a>
+                <a href="#analytics" data-nav>Analytics</a>
+            </nav>
+            <div class="sidebar-panel">
+                <span>Class Health</span>
+                <strong id="sidebarHealth">--</strong>
+                <small>Live NumPy analysis</small>
+            </div>
+        </aside>
+
+        <main class="main">
+            <header class="topbar">
+                <button class="icon-button mobile-menu" id="menuButton" aria-label="Open sidebar" title="Open sidebar">
+                    <i data-lucide="menu"></i>
+                </button>
+                <div class="search-wrap">
+                    <i data-lucide="search"></i>
+                    <input id="globalSearch" type="search" placeholder="Search students, roll numbers, grades">
+                    <kbd>/</kbd>
+                </div>
+                <div class="topbar-actions">
+                    <button class="icon-button" id="themeToggle" aria-label="Toggle theme" title="Toggle theme">
+                        <i data-lucide="moon"></i>
+                    </button>
+                    <a class="icon-button" href="/download/csv" aria-label="Download CSV" title="Download CSV">
+                        <i data-lucide="file-down"></i>
+                    </a>
+                    <a class="icon-button" href="/download/pdf" aria-label="Download PDF" title="Download PDF">
+                        <i data-lucide="file-text"></i>
+                    </a>
+                    <button class="button primary" id="printReport">
+                        <i data-lucide="printer"></i>
+                        <span>Print</span>
+                    </button>
+                </div>
+            </header>
+
+            <section class="hero" id="overview">
+                <div>
+                    <p class="eyebrow">Premium analytics dashboard</p>
+                    <h1>Student Marks Analyzer</h1>
+                    <p class="hero-copy">NumPy-powered performance intelligence for academic teams that need clarity fast.</p>
+                </div>
+                <div class="hero-card glass">
+                    <span>Class Average</span>
+                    <strong id="heroAverage">--</strong>
+                    <small>Updated from generated dataset</small>
+                </div>
+            </section>
+
+            <section class="stats-grid" id="statsGrid" aria-label="Overview statistics"></section>
+
+            <section class="section-grid overview-charts">
+                <article class="panel chart-panel compact-chart">
+                    <div class="section-heading">
+                        <div>
+                            <p class="eyebrow">Performance</p>
+                            <h2>Subject Averages</h2>
+                        </div>
+                    </div>
+                    <div class="chart-frame">
+                        <canvas id="barChart"></canvas>
+                    </div>
+                </article>
+                <article class="panel chart-panel compact-chart">
+                    <div class="section-heading">
+                        <div>
+                            <p class="eyebrow">Momentum</p>
+                            <h2>Average Trend</h2>
+                        </div>
+                    </div>
+                    <div class="chart-frame">
+                        <canvas id="lineChart"></canvas>
+                    </div>
+                </article>
+            </section>
+
+            <section class="panel" id="students">
+                <div class="section-heading">
+                    <div>
+                        <p class="eyebrow">Student table</p>
+                        <h2>Records</h2>
+                    </div>
+                    <div class="table-tools">
+                        <select id="statusFilter" aria-label="Filter by status">
+                            <option value="all">All Status</option>
+                            <option value="Pass">Pass</option>
+                            <option value="Fail">Fail</option>
+                        </select>
+                        <select id="gradeFilter" aria-label="Filter by grade">
+                            <option value="all">All Grades</option>
+                            <option value="A+">A+</option>
+                            <option value="A">A</option>
+                            <option value="B">B</option>
+                            <option value="C">C</option>
+                            <option value="Pass">Pass</option>
+                            <option value="Fail">Fail</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="table-shell">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th data-sort="name">Student Name</th>
+                                <th data-sort="rollNumber">Roll Number</th>
+                                <th>Marks</th>
+                                <th data-sort="average">Average</th>
+                                <th data-sort="grade">Grade</th>
+                                <th data-sort="status">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="studentRows"></tbody>
+                    </table>
+                    <div class="empty-state" id="emptyState">
+                        <i data-lucide="inbox"></i>
+                        <strong>No students found</strong>
+                    </div>
+                </div>
+                <div class="pagination">
+                    <button class="button ghost" id="prevPage"><i data-lucide="chevron-left"></i> Prev</button>
+                    <span id="pageInfo">Page 1</span>
+                    <button class="button ghost" id="nextPage">Next <i data-lucide="chevron-right"></i></button>
+                </div>
+            </section>
+
+            <section class="panel" id="subjects">
+                <div class="section-heading">
+                    <div>
+                        <p class="eyebrow">Subject analysis</p>
+                        <h2>Statistical Summary</h2>
+                    </div>
+                </div>
+                <div class="subject-grid" id="subjectGrid"></div>
+            </section>
+
+            <section class="charts-mosaic" id="charts">
+                <article class="panel chart-panel">
+                    <h2>Grade Distribution</h2>
+                    <div class="chart-frame">
+                        <canvas id="doughnutChart"></canvas>
+                    </div>
+                </article>
+                <article class="panel chart-panel">
+                    <h2>Status Split</h2>
+                    <div class="chart-frame">
+                        <canvas id="pieChart"></canvas>
+                    </div>
+                </article>
+                <article class="panel chart-panel">
+                    <h2>Subject Comparison</h2>
+                    <div class="chart-frame">
+                        <canvas id="radarChart"></canvas>
+                    </div>
+                </article>
+                <article class="panel chart-panel">
+                    <h2>Score Distribution</h2>
+                    <div class="chart-frame">
+                        <canvas id="histogramChart"></canvas>
+                    </div>
+                </article>
+            </section>
+
+            <section class="analytics-grid" id="analytics">
+                <article class="panel">
+                    <h2>Top 5 Students</h2>
+                    <div class="rank-list" id="topStudents"></div>
+                </article>
+                <article class="panel">
+                    <h2>Bottom 5 Students</h2>
+                    <div class="rank-list" id="bottomStudents"></div>
+                </article>
+                <article class="panel wide">
+                    <h2>Class Insights</h2>
+                    <div class="insight-list" id="classInsights"></div>
+                </article>
+            </section>
+        </main>
+    </div>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="{{ url_for('static', filename='js/charts.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/animations.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
